@@ -4,7 +4,6 @@ from typing import Any, Optional
 from pydantic import PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
 
-
 class AppEnvironment(str, enum.Enum):
     DEVELOP = "development"
     PRODUCTION = "production"
