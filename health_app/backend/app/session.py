@@ -17,3 +17,4 @@ if settings.SQLALCHEMY_DATABASE_URI:
 else:
     raise ValueError("SQLALCHEMY_DATABASE_URI is not set")
 
+
