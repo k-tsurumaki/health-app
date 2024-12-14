@@ -1,7 +1,7 @@
 from fastapi import FastAPI
+from health_app.core.config import settings
+from health_app.backend.app.api.api_v1.api_router import router
 
-app = FastAPI()
+app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.include_router(router, prefix=settings.API_V1_STR)
