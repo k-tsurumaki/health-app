@@ -12,7 +12,8 @@ class Meal(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)  
-    meal_type = Column(String(50), nullable=False)  # 食事の種類（例：朝食、昼食、夕食）
+    meal_type = Column(String(50), nullable=False)  # 食事の種類（例：朝食、昼食、夕食、間食）
+    meal_name = Column(String(50), nullable=False)
     calories = Column(Float, nullable=False)  
     date_time = Column(DateTime, default=datetime.now, nullable=False) 
     
