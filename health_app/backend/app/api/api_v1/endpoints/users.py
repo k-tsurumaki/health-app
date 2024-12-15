@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 
 from health_app.backend.app import (
     crud,
@@ -33,6 +34,29 @@ async def create_user_endpoint(
         raise HTTPException(status_code=400, detail="User could not be created")
     
 
-@router.get("/")
-async def read_users():
-    return {"message": "This is an empty endpoint"}
+@router.get("/", response_model=List[schemas.UserResponse])
+async def read_users(db: Session = Depends(deps.get_db)) -> List[schemas.UserResponse]:
+    """ユーザー一覧を取得するエンドポイント
+
+    Args:
+        db (Session, optional): DBセッション. Defaults to Depends(deps.get_db).
+
+    Returns:
+        List[schemas.UserResponse]: 取得されたユーザーの一覧
+    """
+    users = crud.get_users(db)
+    return users
+
+@router.get("/{user_id}", response_model=schemas.UserResponse)
+async def read_user(user_id: int, db: Session = Depends(deps.get_db)) -> schemas.UserResponse:
+    """指定したユーザーを取得するエンドポイント
+
+    Args:
+        user_id (int): 取得したいユーザーのユーザーID
+        db (Session, optional): DBセッション. Defaults to Depends(deps.get_db).
+
+    Returns:
+        schemas.UserResponse: 取得されたユーザー
+    """
+    user = crud.get_user_by_uid(db, user_id)
+    return user

@@ -19,6 +19,7 @@ tensorflow = "^2.18.0"
 pillow = "^11.0.0"
 psycopg2-binary = "^2.9.10"
 alembic = "^1.14.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 
 [build-system]
