@@ -26,9 +26,9 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from health_app.db.user import User
-from health_app.db.meal import Meal
-from health_app.db.weight_record import WeightRecord
+from health_app.db.models.user import User
+from health_app.db.models.meal import Meal
+from health_app.db.models.weight_record import WeightRecord
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
