@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from health_app.backend.app.api.api_v1.endpoints import users
+from health_app.backend.app.api.api_v1.endpoints import meals, users
 
 router = APIRouter()
 
 router.include_router(users.router, prefix="/users", tags=["users"])
+router.include_router(meals.router, prefix="/meals", tags=["meals"])

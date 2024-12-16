@@ -30,8 +30,7 @@ async def create_user_endpoint(
     created_user = crud.create_user(db, user)
     if created_user:
         return created_user
-    else:
-        raise HTTPException(status_code=400, detail="User could not be created")
+    raise HTTPException(status_code=400, detail="User could not be created")
     
 
 @router.get("/", response_model=List[schemas.UserResponse])
@@ -73,7 +72,7 @@ async def read_user(user_id: int, db: Session = Depends(deps.get_db)) -> schemas
 
 @router.patch("/{user_id}", response_model=schemas.UserResponse)
 async def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depends(deps.get_db)) -> schemas.UserResponse:
-    """
+    """指定したユーザーを更新するエンドポイント
 
     Args:
         user_id (int): 更新したいユーザーのユーザーID
@@ -86,7 +85,7 @@ async def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depe
     Returns:
         schemas.UserResponse: 更新されたユーザー
     """
-    existing_user = crud.update_user(db, user_id, user)
+    existing_user = crud.get_user_by_uid(db, user_id)
     if existing_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     updated_user = crud.update_user(db, user_id, user)

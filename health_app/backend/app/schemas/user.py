@@ -2,28 +2,23 @@ from typing import Optional, Literal
 from datetime import date
 from pydantic import BaseModel
 
-class UserCreate(BaseModel):
-    username: Optional[str] = "default_name"
+GenderType = Literal["man", "woman"]
+
+class UserBase(BaseModel):
+    username: str
     email: str
-    password: str
-    gender: Literal["man", "woman", "other"]
+    gender: GenderType
     date_of_birth: date
     height_cm: float
 
-class UserResponse(BaseModel):
+class UserCreate(UserBase):
+    username: Optional[str] = "default_name"  # デフォルト値を許可
+    password: str  # 新規作成時はパスワードが必須
+
+class UserResponse(UserBase):
     id: int
-    username: str
-    email: str
-    gender: Literal["man", "woman", "other"]
-    date_of_birth: date
-    height_cm: float
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True}  # 属性から生成可能
 
-class UserUpdate(BaseModel):
-    username: str
-    email: str
-    password: str
-    gender: Literal["man", "woman", "other"]
-    date_of_birth: date
-    height_cm: float
+class UserUpdate(UserBase):
+    password: str 

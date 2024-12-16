@@ -64,7 +64,7 @@ def update_user(db:Session, user_id: int, user: schemas.UserUpdate) -> models.Us
         user (schemas.UserUpdate): 更新するユーザーのユーザー情報
 
     Returns:
-        models.User: _description_
+        models.User: 更新されたユーザーのモデル
     """
     db_user = db.query(models.User).filter(models.User.id==user_id).first()
     for key, value in user.model_dump().items():
