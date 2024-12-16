@@ -13,7 +13,7 @@ if settings.SQLALCHEMY_DATABASE_URI:
 
     if settings.ENVIRONMENT == "development":
         db_info = f"Using database at {settings.SQLALCHEMY_DATABASE_URI}"
-        print(db_info)
+        # print(db_info)
 else:
     raise ValueError("SQLALCHEMY_DATABASE_URI is not set")
 

@@ -5,8 +5,6 @@ from sqlalchemy import Column, String, Integer, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-JST = timezone(timedelta(hours=9))
-
 class Meal(Base):
     __tablename__ = "meals"
     
@@ -15,9 +13,9 @@ class Meal(Base):
     meal_type = Column(String(50), nullable=False)  # 食事の種類（例：朝食、昼食、夕食、間食）
     meal_name = Column(String(50), nullable=False)
     calories = Column(Float, nullable=False)  
-    date_time = Column(DateTime, default=datetime.now, nullable=False) 
+    date_time = Column(DateTime, default=lambda: datetime.now(), nullable=False) 
+    created_at = Column(DateTime, default=lambda: datetime.now())
+    updated_at = Column(DateTime, default=lambda: datetime.now(), onupdate=lambda: datetime.now())
     
     user = relationship("User", back_populates="meals")  # ユーザーとのリレーションシップ
     
-    created_at = Column(DateTime, default=datetime.now(JST))
-    updated_at = Column(DateTime, default=datetime.now(JST), onupdate=datetime.now(JST))
