@@ -48,9 +48,43 @@ def get_user_by_uid(db:Session, user_id: int) -> models.User:
 
     Args:
         db (Session): データベースセッション
-        user_id (int): 取得したいユーザーのユーザーIDID
+        user_id (int): 取得したいユーザーのユーザーID
 
     Returns:
         models.User: 取得されたユーザーのモデル
     """
     return db.query(models.User).filter(models.User.id == user_id).first()
+
+def update_user(db:Session, user_id: int, user: schemas.UserUpdate) -> models.User:
+    """ユーザー情報を更新する
+
+    Args:
+        db (Session): データベースセッション
+        user_id (int): 更新するユーザーのユーザーID
+        user (schemas.UserUpdate): 更新するユーザーのユーザー情報
+
+    Returns:
+        models.User: _description_
+    """
+    db_user = db.query(models.User).filter(models.User.id==user_id).first()
+    for key, value in user.model_dump().items():
+        setattr(db_user, key, value)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+        
+
+def delete_user(db:Session, user_id: int) -> models.User:
+    """ユーザーIDで指定したユーザーを削除する
+
+    Args:
+        db (Session): データベースセッション
+        user_id (int): 削除したいユーザーのユーザーID
+
+    Returns:
+        models.User: 削除したユーザーのモデル
+    """
+    db_user = db.query(models.User).filter(models.User.id==user_id).first()
+    db.delete(db_user)
+    db.commit()
+    return db_user

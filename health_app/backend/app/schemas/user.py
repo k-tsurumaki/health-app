@@ -19,3 +19,11 @@ class UserResponse(BaseModel):
     height_cm: float
 
     model_config = {"from_attributes": True}
+
+class UserUpdate(BaseModel):
+    username: str
+    email: str
+    password: str
+    gender: str
+    date_of_birth: date
+    height_cm: float
