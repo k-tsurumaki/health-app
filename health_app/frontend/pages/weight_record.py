@@ -1,19 +1,17 @@
 import streamlit as st
 from health_app.frontend.app import post_data
 from health_app.frontend.style import set_page_config, set_custom_css
+from health_app.frontend.components import custom_date_input
+
 
 def record_weight_page():
     set_page_config()
     set_custom_css()
 
     st.title("体重記録ページ 📝")
-    st.write("日付と体重を記録して、健康管理に役立てましょう！")
+    st.write("日付と体重を記録しよう！")
 
-    date = st.date_input(
-        label="日付",  # ラベルを明示
-        key="date_input",
-        help="記録したい日付をカレンダーから選んでください"
-    )
+    date = custom_date_input()
     weight = st.number_input("体重 (kg)", min_value=0.0, step=0.1, format="%.1f")
 
     if st.button("記録を保存"):
@@ -22,6 +20,7 @@ def record_weight_page():
             post_data("/weight_records", data)
         else:
             st.warning("正しいデータを入力してください。")
+
 
 if __name__ == "__main__":
     record_weight_page()
