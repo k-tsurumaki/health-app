@@ -1,9 +1,10 @@
 import streamlit as st
+from datetime import date
 
-# 日付入力の共通関数
-def custom_date_input():
-    return st.date_input(
-        label="日付",  # ラベルを明示
-        key="date_input",
-        help="記録したい日付をカレンダーから選んでください"
+def custom_date_input(label, key, help):
+    selected_date = st.date_input(
+        label=label,
+        key=key,
+        help=help,
     )
+    return selected_date.strftime("%Y-%m-%d")  # フォーマット済み文字列を返す
