@@ -99,7 +99,7 @@ async def delete_meal(meal_id: int, db: Session = Depends(deps.get_db)) -> schem
     """
     existing_meal = crud.get_meal_by_mid(db, meal_id)
     if existing_meal is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Meal not found")
     deleted_meal = crud.delete_meal(db, meal_id)
     return deleted_meal
     
