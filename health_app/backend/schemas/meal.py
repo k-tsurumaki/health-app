@@ -18,8 +18,6 @@ class MealCreate(MealBase):
 
 
 class MealResponse(MealBase):
-    id: int
-
     model_config = {"from_attributes": True}
 
 

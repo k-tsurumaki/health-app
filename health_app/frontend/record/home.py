@@ -1,16 +1,21 @@
 import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+from health_app.frontend.app import BASE_URL, get_weight_records
 
 if "current_page" not in st.session_state:
     st.session_state.current_page = "home"
 
 st.write("Track your daily meals,weight, and monitor your health trends.")
 
-# get_users_button = st.button("Get All Users Info")
+# DBから体重データを取得
+get_weight_record_url = "/weight_records/"
+data = get_weight_records(get_weight_record_url, user_id=5)
 
-# if get_users_button:
-#     url = "http://127.0.0.1:8000/api/v1/users/"
-#     response = requests.get(url)
+# 取得したJSON形式の体重データをPandasのDataFrameに変換
+df = pd.DataFrame(data)
 
-#     if response.status_code == 200:
-#         data = response.json()
-#         st.write(data)
+# PandasのDataFrameに変換したデータをグラフ化
+fig = px.line(df, x="date", y="weight", title="Weight Record")
+st.plotly_chart(fig)

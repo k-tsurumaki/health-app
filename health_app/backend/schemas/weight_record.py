@@ -14,8 +14,6 @@ class WeightRecordCreate(WeightRecordBase):
 
 
 class WeightRecordResponse(WeightRecordBase):
-    id: int
-
     model_config = {"from_attributes": True}
 
 

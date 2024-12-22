@@ -6,17 +6,15 @@ if "current_page" not in st.session_state:
     st.session_state.current_page = "weight_record"
 st.write(f"You are logged in as {st.session_state.username}.")
 
-st.write("## 体重記録")
-st.write("日付と体重を記録しよう！")
+st.write("## Weight Record")
+st.write("Let's record the date and weight!")
 
-date = custom_date_input(label="日付", key="weight_record", help="日付を選択してください")
-weight = st.number_input("体重 (kg)", min_value=0.0, step=0.1, format="%.1f")
+date = custom_date_input(label="Date", key="weight_record", help="Please select a date")
+weight = st.number_input("Weight (kg)", min_value=0.0, step=0.1, format="%.1f")
 
-if st.button("記録を保存"):
+if st.button("Save Record"):
     if date and weight > 0:
         data = {"user_id": 5, "date": str(date), "weight": weight}
         post_data("/weight_records", data)
     else:
-        st.warning("正しいデータを入力してください。")
-
-
+        st.warning("Please enter valid data.")

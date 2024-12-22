@@ -8,32 +8,32 @@ if "current_page" not in st.session_state:
     
 st.write(f"You are logged in as {st.session_state.username}.")
 
-st.write("## 食事記録")
-st.write("日付と食事を記録しよう！")
+st.write("## Meal Record")
+st.write("Let's record the date and meal!")
 
-date = custom_date_input(label="日付", key="meal_record", help="日付を選択してください")
+date = custom_date_input(label="Date", key="meal_record", help="Please select a date")
 meal_type = st.selectbox(
-"食事の種類を選択", options=["breakfast", "lunch", "dinner", "other"], index=0
+    "Select meal type", options=["breakfast", "lunch", "dinner", "other"], index=0
 )
-meal_name = st.text_input("食べた料理を入力")
-calories = st.number_input("カロリーを入力(kcal)", min_value=0.0, step=1.0)
+meal_name = st.text_input("Enter the meal name")
+calories = st.number_input("Enter calories (kcal)", min_value=0.0, step=1.0)
 
 uploaded_image = st.file_uploader(
-"食事の画像をアップロード", type=["jpg", "jpeg", "png"]
+    "Upload meal image", type=["jpg", "jpeg", "png"]
 )
 
 if uploaded_image:
     image = Image.open(uploaded_image)
-    st.image(image, caption="アップロードされた食事の画像")
+    st.image(image, caption="Uploaded meal image")
 
 else:
-    st.warning("画像をアップロードしてください")
+    st.warning("Please upload an image")
 
-if st.button("送信"):
+if st.button("Submit"):
     if not meal_name:
-        st.error("食品名を入力してください")
-    elif calories<0:
-        st.error("カロリーを正しく入力してください")
+        st.error("Please enter the meal name")
+    elif calories < 0:
+        st.error("Please enter valid calories")
     else:
         data = {
             "user_id": 5,
@@ -43,4 +43,3 @@ if st.button("送信"):
             "date": date
         }
         post_data("/meals/", data)
-

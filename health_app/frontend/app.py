@@ -13,3 +13,11 @@ def post_data(endpoint, data):
             st.error(f"エラーが発生しました: {response.text}")
     except Exception as e:
         st.error(f"リクエストに失敗しました: {str(e)}")
+        
+def get_weight_records(endpoint, user_id:int):
+    url = f"{BASE_URL}{endpoint}"
+    response = requests.get(url, params={"user_id": user_id})
+    if 200 <= response.status_code < 300:
+        data = response.json()
+        return data
+    return []
