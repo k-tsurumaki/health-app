@@ -18,6 +18,14 @@ class User(Base):
     updated_at = Column(
         DateTime, default=lambda: datetime.now(), onupdate=lambda: datetime.now()
     )
+    
+    # 誕生日から年齢を計算
+    @property
+    def age(self):
+        today = datetime.now(timezone.utc)
+        return today.year - self.date_of_birth.year - (
+            (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
+        )
 
     # リレーションシップ
     meals = relationship(

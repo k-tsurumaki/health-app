@@ -56,7 +56,7 @@ if not selected_meals.empty:
     for meal_type in meal_types:
         meals_of_type = selected_meals[selected_meals["meal_type"] == meal_type]
         if not meals_of_type.empty:
-            st.write(f"### {meal_type.capitalize()}")
+            st.markdown(f"### {meal_type.capitalize()}")
             meal_table = pd.DataFrame(meals_of_type, columns=["meal_name", "calories"])
             meal_table["calories"] = meal_table["calories"].map(
                 lambda x: f"{x:.1f} kcal"
@@ -65,7 +65,7 @@ if not selected_meals.empty:
             meal_calories[meal_type] += meals_of_type["calories"].sum()
             total_calories += meals_of_type["calories"].sum()
 
-    st.write(f"### Total calories: {total_calories} kcal")
+    st.markdown(f"### Total {total_calories} kcal")
 
     # 平均カロリーを計算
     avg_calories = total_calories / len(meal_types)

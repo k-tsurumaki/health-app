@@ -20,6 +20,7 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    age: int
 
     model_config = {"from_attributes": True}  # 属性から生成可能
 
