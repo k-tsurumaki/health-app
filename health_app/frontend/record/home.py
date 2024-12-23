@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import date
 
-from health_app.frontend.app import get_weight_records, get_meals
+from health_app.frontend.app import get_user, get_weight_records, get_meals
 from health_app.backend.schemas.meal import MealType
 
 if "current_page" not in st.session_state:
@@ -12,13 +12,20 @@ if "current_page" not in st.session_state:
 
 st.write("Track your daily meals,weight, and monitor your health trends.")
 
+# DBからユーザー情報を取得
+user_id = 5
+user_data = get_user("/users/", user_id)
+
+# ユーザー情報を表示
+st.write(f"## {user_data['username']}'s Health Record")
+st.write(f"**Age**: {user_data['age']} years")
 
 # DBから食事・体重データを取得
 get_meal_record_url = "/meals"
-meal_data = get_meals(get_meal_record_url, user_id=5)
+meal_data = get_meals(get_meal_record_url, user_id)
 
 get_weight_record_url = "/weight_records"
-weight_record_data = get_weight_records(get_weight_record_url, user_id=5)
+weight_record_data = get_weight_records(get_weight_record_url, user_id)
 
 
 # 取得したJSON形式の食事・体重データをPandasのDataFrameに変換
