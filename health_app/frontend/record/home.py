@@ -20,9 +20,6 @@ st.write("Track your daily meals,weight, and monitor your health trends.")
 user_id = 5
 user_data = get_user("/users/", user_id)
 
-# ユーザー情報を表示
-st.write(f"## {user_data['username']}'s Health Record")
-st.write(f"**Age**: {user_data['age']} years")
 
 # DBから食事・体重データを取得
 get_meal_record_url = "/meals"
@@ -52,6 +49,11 @@ health_indicators = calculate_health_indicators(
 )
 weight_indicators_df = pd.DataFrame(weight_indicators, index=[0])
 health_indicators_df = pd.DataFrame(health_indicators, index=[0])
+
+# ユーザー情報を表示
+st.write(f"## Health Record")
+st.write(f"**Age**: {user_data['age']} years  old")
+st.write(f"**Weight**: {weight_record_df.iloc[-1]['weight']} kg")
 
 st.table(weight_indicators_df)
 st.table(health_indicators_df)

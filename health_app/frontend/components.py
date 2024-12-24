@@ -19,25 +19,25 @@ def cm_to_m(cm: float):
 
 # 身長・体重から標準体重を計算する関数
 def standard_weight(height: float):
-    standard_weight = 22 * (cm_to_m(height) ** 2)
+    standard_weight = round(22 * (cm_to_m(height) ** 2), 1)
     return standard_weight
 
 
 # 身長・体重から美容体重を計算する関数
 def beauty_weight(height: float):
-    beauty_weight = 20 * (cm_to_m(height) ** 2)
+    beauty_weight = round(20 * (cm_to_m(height) ** 2), 1)
     return beauty_weight
 
 
 # 身長・体重からシンデレラ体重を計算する関数
 def cinderella_weight(height: float):
-    cinderella_weight = 18 * (cm_to_m(height) ** 2)
+    cinderella_weight = round(18 * (cm_to_m(height) ** 2), 1)
     return cinderella_weight
 
 
 # 身長・体重からBMIを計算する関数
 def bmi(height: float, weight: float):
-    bmi = weight / (cm_to_m(height) ** 2)
+    bmi = round(weight / (cm_to_m(height) ** 2), 1)
     return bmi
 
 
@@ -61,9 +61,9 @@ def obesity_degree(height: float, weight: float):
 # 年齢・身長・体重・性別から基礎代謝量を計算する関数
 def bmr(age: int, height: float, weight: float, gender: GenderType):
     if gender == "man":
-        bmr = 66 + 13.7 * weight + 5.0 * height - 6.8 * age
+        bmr = round(66 + 13.7 * weight + 5.0 * height - 6.8 * age, 1)
     else:
-        bmr = 665 + 9.6 * weight + 1.7 * height - 7.0 * age
+        bmr = round(665 + 9.6 * weight + 1.7 * height - 7.0 * age, 1)
     return bmr
 
 # 年齢・性別から1日の推定摂取カロリーを計算する関数
