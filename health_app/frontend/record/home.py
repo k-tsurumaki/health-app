@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import date
+from st_aggrid import AgGrid
 
 from health_app.frontend.app import get_user, get_weight_records, get_meals
 from health_app.frontend.components import (
@@ -38,9 +39,7 @@ meal_df.sort_values("date", inplace=True)
 weight_record_df.sort_values("date", inplace=True)
 
 # 各指標を取得
-weight_indicators = calculate_weight_indicators(
-    user_data["height_cm"]
-)
+weight_indicators = calculate_weight_indicators(user_data["height_cm"])
 health_indicators = calculate_health_indicators(
     user_data["age"],
     user_data["height_cm"],
@@ -59,10 +58,42 @@ st.table(weight_indicators_df)
 st.table(health_indicators_df)
 
 # PandasのDataFrameに変換したデータをグラフ化
-fig = px.line(
-    weight_record_df, x="date", y="weight", title="Weight Record", markers=True
+# PandasのDataFrameに変換したデータをグラフ化
+fig = go.Figure()
+
+# 体重データのラインを追加
+fig.add_trace(
+    go.Scatter(
+        x=weight_record_df["date"],
+        y=weight_record_df["weight"],
+        mode="lines+markers+text",
+        name="Weight",
+        text=weight_record_df["weight"],
+        # textposition="top center",
+        line=dict(color="#1f77b4")
+    )
 )
-fig.update_traces(text=weight_record_df["weight"], textposition="top center")
+
+# weight_indicatorsの3つの指標を追加
+colors = ["#1f77b4", "#1f78b4", "#1f79b4"]  # 青系統の色をもっと変える
+for i, (indicator, value) in enumerate(weight_indicators.items()):
+    fig.add_hline(
+        y=value,
+        line_dash="dash",
+        annotation_text=f"{indicator}: {value}kg",
+        annotation_position="top right",
+        line_color=colors[i % len(colors)],
+        name=indicator  # 凡例に指標の名前を追加
+    )
+
+# 凡例を表示
+fig.update_layout(
+    title="Weight Record",
+    xaxis_title="Date",
+    yaxis_title="Weight [kg]",
+    showlegend=True
+)
+
 st.plotly_chart(fig)
 
 
@@ -95,9 +126,6 @@ if not selected_meals.empty:
 
     st.markdown(f"### Total {total_calories} kcal")
 
-    # 平均カロリーを計算
-    avg_calories = total_calories / len(meal_types)
-
     # グラフを生成
     fig = go.Figure()
     for meal_type in meal_types:
@@ -110,19 +138,6 @@ if not selected_meals.empty:
                 textposition="auto",
             )
         )
-
-    # 平均カロリーのラインを追加
-    fig.add_trace(
-        go.Scatter(
-            x=meal_types,
-            y=[avg_calories] * (len(meal_types)),
-            mode="lines",
-            name="Average",
-            line=dict(dash="dash"),
-            text=[f"{avg_calories:.1f} kcal"] * len(meal_types),
-            textposition="top right",
-        )
-    )
 
     # Add total calories
     fig.add_trace(
@@ -138,7 +153,7 @@ if not selected_meals.empty:
     fig.update_layout(
         title="Calories by Meal Type",
         xaxis_title="Meal Type",
-        yaxis_title="Calories",
+        yaxis_title="Calories [kcal]",
         barmode="group",
     )
 
