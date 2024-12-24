@@ -95,3 +95,30 @@ def daily_caloric_needs(age: int, gender: str) -> int:
         elif 65 <= age <= 74:
             return 1850
     return 0  # 年齢が範囲外の場合や性別が不明な場合は0を返す
+
+
+# 身長を入力して標準体重、美容体重、シンデレラ体重を計算し、dictで返す関数
+def calculate_weight_indicators(height: float):
+    standard_weight_value = standard_weight(height)
+    beauty_weight_value = beauty_weight(height)
+    cinderella_weight_value = cinderella_weight(height)
+    weight_indicators = {
+        "Standard Weight": standard_weight_value,
+        "Beauty Weight": beauty_weight_value,
+        "Cinderella Weight": cinderella_weight_value,
+    }
+    return weight_indicators
+
+# 年齢・身長・体重・性別を入力してBMI、肥満度、基礎代謝量、一日に必要なエネルギー量を計算し、dictで返す関数
+def calculate_health_indicators(age: int, height: float, weight: float, gender: GenderType):
+    bmi_value = bmi(height, weight)
+    obesity_degree_value = obesity_degree(height, weight)
+    bmr_value = bmr(age, height, weight, gender)
+    daily_caloric_needs_value = daily_caloric_needs(age, gender)
+    health_indicators = {
+        "BMI": bmi_value,
+        "Obesity Degree": obesity_degree_value,
+        "BMR": bmr_value,
+        "Daily Caloric Needs": daily_caloric_needs_value,
+    }
+    return health_indicators

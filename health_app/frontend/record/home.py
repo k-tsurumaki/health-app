@@ -5,6 +5,10 @@ import plotly.graph_objects as go
 from datetime import date
 
 from health_app.frontend.app import get_user, get_weight_records, get_meals
+from health_app.frontend.components import (
+    calculate_health_indicators,
+    calculate_weight_indicators,
+)
 from health_app.backend.schemas.meal import MealType
 
 if "current_page" not in st.session_state:
@@ -36,6 +40,21 @@ weight_record_df = pd.DataFrame(weight_record_data)
 meal_df.sort_values("date", inplace=True)
 weight_record_df.sort_values("date", inplace=True)
 
+# 各指標を取得
+weight_indicators = calculate_weight_indicators(
+    user_data["height_cm"]
+)
+health_indicators = calculate_health_indicators(
+    user_data["age"],
+    user_data["height_cm"],
+    weight_record_df.iloc[-1]["weight"],
+    user_data["gender"],
+)
+weight_indicators_df = pd.DataFrame(weight_indicators, index=[0])
+health_indicators_df = pd.DataFrame(health_indicators, index=[0])
+
+st.table(weight_indicators_df)
+st.table(health_indicators_df)
 
 # PandasのDataFrameに変換したデータをグラフ化
 fig = px.line(
