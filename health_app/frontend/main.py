@@ -36,7 +36,7 @@ current_page = st.session_state.current_page
 logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
 settings = st.Page("settings.py", title="Settings", icon=":material/settings:")
 home_page = st.Page(
-    "record/home.py", title="Home", icon=":material/home:", default=(current_page == "home")
+    "record/home.py", title="Dashboard", icon=":material/dashboard:", default=(current_page == "home")
 )
 record_meal_page = st.Page("record/meal.py", title="Record Meal", icon=":material/restaurant:")
 record_weight_page = st.Page(
@@ -51,9 +51,9 @@ st.title("Health Tracker 💪")
 
 if st.session_state.current_page == "home":
     pg = st.navigation(
-        {"Account": accout_pages, "Home": home_page, "Record": record_pages}
+        {"Account": accout_pages, "Dashboard": home_page, "Record": record_pages}
     )
 else:
-    pg = st.navigation([st.Page(login)])
+    pg = st.navigation([st.Page(login, title="Login", icon=":material/login:")])
 
 pg.run()
