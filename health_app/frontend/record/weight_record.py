@@ -4,6 +4,9 @@ from health_app.frontend.components import custom_date_input
 
 if "current_page" not in st.session_state:
     st.session_state.current_page = "weight_record"
+if "wight_record_updated" not in st.session_state:
+    st.session_state.weight_record_updated = False
+    
 st.write(f"You are logged in as {st.session_state.username}.")
 
 st.write("## Weight Record")
@@ -16,5 +19,6 @@ if st.button("Save Record"):
     if date and weight > 0:
         data = {"user_id": 5, "date": str(date), "weight": weight}
         post_data("/weight_records", data)
+        st.session_state.weight_record_updated = True
     else:
         st.warning("Please enter valid data.")

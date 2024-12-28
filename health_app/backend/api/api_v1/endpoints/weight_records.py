@@ -50,16 +50,16 @@ async def read_weight_records(
         raise HTTPException(status_code=404, detail="No weight records found")
     return records
 
-@router.patch("/{record_id}", response_model=schemas.WeightRecordResponse)
+@router.patch("/{weight_record_id}", response_model=schemas.WeightRecordResponse)
 async def update_weight_record(
-    record_id: int,
+    weight_record_id: int,
     weight_record: schemas.WeightRecordUpdate,
     db: Session = Depends(deps.get_db)
 ) -> schemas.WeightRecordResponse:
     """指定した体重記録を更新するエンドポイント
 
     Args:
-        record_id (int): 更新する体重記録のID
+        weight_record_id (int): 更新する体重記録のID
         weight_record (schemas.WeightRecordUpdate): 更新内容
         db (Session, optional): DBセッション. Defaults to Depends(deps.get_db).
 
@@ -69,20 +69,20 @@ async def update_weight_record(
     Returns:
         schemas.WeightRecordResponse: 更新された体重記録
     """
-    existing_record = crud.get_weight_record_by_id(db, record_id)
+    existing_record = crud.get_weight_record_by_id(db, weight_record_id)
     if existing_record is None:
         raise HTTPException(status_code=404, detail="Weight record not found")
-    updated_record = crud.update_weight_record(db, record_id, weight_record)
+    updated_record = crud.update_weight_record(db, weight_record_id, weight_record)
     return updated_record
 
-@router.delete("/{record_id}", response_model=schemas.WeightRecordResponse)
+@router.delete("/{weight_record_id}", response_model=schemas.WeightRecordResponse)
 async def delete_weight_record(
-    record_id: int, db: Session = Depends(deps.get_db)
+    weight_record_id: int, db: Session = Depends(deps.get_db)
 ) -> schemas.WeightRecordResponse:
     """指定した体重記録を削除するエンドポイント
 
     Args:
-        record_id (int): 削除する体重記録のID
+        weight_record_id (int): 削除する体重記録のID
         db (Session, optional): DBセッション. Defaults to Depends(deps.get_db).
 
     Raises:
@@ -91,8 +91,8 @@ async def delete_weight_record(
     Returns:
         schemas.WeightRecordResponse: 削除された体重記録
     """
-    existing_record = crud.get_weight_record_by_id(db, record_id)
+    existing_record = crud.get_weight_record_by_id(db, weight_record_id)
     if existing_record is None:
         raise HTTPException(status_code=404, detail="Weight record not found")
-    deleted_record = crud.delete_weight_record(db, record_id)
+    deleted_record = crud.delete_weight_record(db, weight_record_id)
     return deleted_record

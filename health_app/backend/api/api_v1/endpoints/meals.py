@@ -32,7 +32,7 @@ async def create_meal_endpoint(
         return created_meal
     raise HTTPException(status_code=400, detail="Meal could not be created") 
 
-@router.get("", response_model=List[schemas.MealResponse])
+@router.get("/", response_model=List[schemas.MealResponse])
 async def read_meals(
     user_id: int,
     date: Optional[date] = None,
