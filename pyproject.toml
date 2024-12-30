@@ -24,6 +24,7 @@ streamlit-authenticator = "^0.4.1"
 black = "^24.10.0"
 plotly = "^5.24.1"
 streamlit-aggrid = "^1.0.5"
+python-dotenv = "^1.0.1"
 
 
 [build-system]

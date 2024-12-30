@@ -3,6 +3,9 @@ from typing import Any, Optional
 
 from pydantic import PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class AppEnvironment(str, enum.Enum):
     DEVELOP = "development"
