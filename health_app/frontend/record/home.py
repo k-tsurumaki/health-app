@@ -3,12 +3,13 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import date
+from health_app.frontend.components import show_go_to_meal_record_link, show_go_to_weight_record_link
 
 from health_app.frontend.app import (
     get_user,
     get_weight_records,
     get_meals,
-    delete_weight_record,
+    delete_record,
 )
 from health_app.frontend.components import (
     calculate_health_indicators,
@@ -21,23 +22,48 @@ if "current_page" not in st.session_state:
 
 st.write("Track your daily meals,weight, and monitor your health trends.")
 
+# TODO:認証情報をもとにユーザーIDを取得できるようにする
 user_id = 5
+
+# APIのエンドポイント
 meal_record_url = "/meals/"
 weight_record_url = "/weight_records/"
 
+# ユーザー情報、食事データ、体重データを取得
 if "user_data" not in st.session_state:
     st.session_state.user_data = get_user("/users/", user_id)
-
-if "meal_df" not in st.session_state:
-    meal_data = get_meals(meal_record_url, user_id)
-    if meal_data:
-        st.session_state.meal_df = pd.DataFrame(meal_data).sort_values("date")
     
 if "weight_record_df" not in st.session_state or "weight_record_updated" in st.session_state:
     weight_record_data = get_weight_records(weight_record_url, user_id)
     if weight_record_data:
         st.session_state.weight_record_df = pd.DataFrame(weight_record_data).sort_values("date")
+    
+if "meal_df" not in st.session_state or "meal_record_updated" in st.session_state:
+    meal_data = get_meals(meal_record_url, user_id)
+    if meal_data:
+        st.session_state.meal_df = pd.DataFrame(meal_data).sort_values("date")
+    
 
+def delete_selected_rows(record_df, edited_record, url):
+    rows_to_delete = edited_record[edited_record["delete"]].index
+    
+    if len(rows_to_delete) == 0:
+        return
+    
+    # 削除の実行
+    for index in rows_to_delete:
+        id = record_df.iloc[index]["id"]
+        delete_record(url, id)
+    
+    # セッションステートのデータフレームを更新
+    record_df = record_df.drop(rows_to_delete).reset_index(drop=True)
+    
+    # 削除フラグをリセット
+    record_df["delete"] = False
+    
+    # 更新を反映させるためにrerunを呼び出す
+    st.rerun()
+    
 tab_weight, tab_meal = st.tabs(["Weight Record", "Meal Record"])
 
 with tab_weight:
@@ -65,11 +91,7 @@ with tab_weight:
         col3.metric("Obesity Degree", health_indicators["Obesity Degree"])
 
         # Record Weightへのリンクを表示
-        st.page_link(
-            "record/weight_record.py",
-            label="Record today's weight",
-            icon=":material/fitness_center:",
-        )
+        show_go_to_weight_record_link()
 
         # 選択された日付の食事・体重データを表示
         selected_date = st.sidebar.date_input(
@@ -111,9 +133,9 @@ with tab_weight:
 
         # delete列を追加し、全データをfalseで初期化
         st.session_state.weight_record_df["delete"] = False
-
+        
         # st.session_state.weight_record_dfのdate列とweight列、delete列を表示
-        edited_weight_record_df = st.data_editor(
+        edited_weight_record = st.data_editor(
             st.session_state.weight_record_df[["date", "weight", "delete"]],
             column_config={
                 "delete": st.column_config.CheckboxColumn(
@@ -126,28 +148,10 @@ with tab_weight:
             hide_index=True,
             key="edited_weight_record_df",
         )
-        
-        def delete_selected_rows():
-            rows_to_delete = edited_weight_record_df[edited_weight_record_df["delete"]].index
-            
-            # 削除の実行
-            for index in rows_to_delete:
-                id = st.session_state.weight_record_df.iloc[index]["id"]
-                delete_weight_record(weight_record_url, id)
-            
-            # セッションステートのデータフレームを更新
-            st.session_state.weight_record_df = st.session_state.weight_record_df.drop(rows_to_delete).reset_index(drop=True)
-            
-            # 削除フラグをリセット
-            st.session_state.weight_record_df["delete"] = False
-            
-            # 更新を反映させるためにrerunを呼び出す
-            st.rerun()
-            
 
         # 削除ボタン
-        if st.button("Delete Selected Rows"):
-            delete_selected_rows()
+        if st.button("Delete Selected Rows", key="delete_weight_record_button", help="Delete the selected rows."):
+            delete_selected_rows(st.session_state.weight_record_df, edited_weight_record, weight_record_url)
     else:
         st.write("No Data")
 
@@ -156,9 +160,12 @@ with tab_meal:
         col1, col2, col3 = st.columns(3)
         total_calories = 0
 
-        selected_meals = st.session_state.meal_df[st.session_state.meal_df["date"] == str(selected_date)]
-        if not selected_meals.empty:
-            total_calories = selected_meals["calories"].sum()
+        # delete列を追加し、全データをfalseで初期化
+        st.session_state.meal_df["delete"] = False
+        
+        meal_df_of_selected_day = st.session_state.meal_df[st.session_state.meal_df["date"] == str(selected_date)]
+        if not meal_df_of_selected_day.empty:
+            total_calories = meal_df_of_selected_day["calories"].sum()
         else:
             st.write(f"No meal data available for {selected_date}")
 
@@ -169,29 +176,37 @@ with tab_meal:
         )
 
         # Record Mealへのリンクを表示
-        st.page_link(
-            "record/meal.py",
-            label="Record today's meals",
-            icon=":material/restaurant:",
-        )
+        show_go_to_meal_record_link()
 
-        selected_meals = st.session_state.meal_df[st.session_state.meal_df["date"] == str(selected_date)]
-        if not selected_meals.empty:
-            meal_types = ["breakfast", "lunch", "dinner", "other"]
+        if not meal_df_of_selected_day.empty:
+            meal_types = [meal_type.value for meal_type in MealType]
             meal_calories = {meal_type: 0 for meal_type in meal_types}
+            edited_meal_records = {}
 
             for meal_type in meal_types:
-                meals_of_type = selected_meals[selected_meals["meal_type"] == meal_type]
+                meals_of_type = meal_df_of_selected_day[meal_df_of_selected_day["meal_type"] == meal_type]
+                key = f"edited_meals_of_type_{meal_type}"
+                
                 if not meals_of_type.empty:
-                    st.markdown(f"### {meal_type.capitalize()}")
-                    meal_table = pd.DataFrame(
-                        meals_of_type, columns=["meal_name", "calories"]
+                    st.markdown(f"### {meal_type.capitalize()} {meals_of_type['calories'].sum()} kcal")
+                    edited_meal_records[meal_type] = st.data_editor(
+                        meals_of_type[["meal_name", "calories", "delete"]],
+                        column_config = {
+                            "delete": st.column_config.CheckboxColumn(
+                                "Delete?",
+                                help="Select the records you want to delete.",
+                                default=False,
+                            )
+                        },
+                        hide_index=True,
+                        key=key,
                     )
-                    meal_table["calories"] = meal_table["calories"].map(
-                        lambda x: f"{x:.1f} kcal"
-                    )
-                    st.dataframe(meal_table.reset_index(drop=True))
-                    meal_calories[meal_type] += meals_of_type["calories"].sum()
+                    meal_calories[meal_type] = meals_of_type["calories"].sum()
+                    
+            if st.button("Delete Selected Rows", key="delete_meal_record_button", help="Delete the selected rows."):
+                for meal_type in meal_types:
+                    if meal_type in edited_meal_records.keys():
+                        delete_selected_rows(st.session_state.meal_df, edited_meal_records[meal_type], meal_record_url)
 
             # グラフを生成
             fig = go.Figure()

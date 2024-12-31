@@ -83,12 +83,12 @@ async def update_meal(
     updated_meal = crud.update_meal(db, meal_id, meal)
     return updated_meal
     
-@router.delete("/", response_model=schemas.MealResponse)
+@router.delete("/{meal_id}", response_model=schemas.MealResponse)
 async def delete_meal(meal_id: int, db: Session = Depends(deps.get_db)) -> schemas.MealResponse:
     """指定した食事を削除するエンドポイント
 
     Args:
-        user_id (int): 削除したい食事の食事ID
+        meal_id (int): 削除したい食事の食事ID
         db (Session, optional): DBセッション. Defaults to Depends(deps.get_db).
 
     Raises:
@@ -102,4 +102,3 @@ async def delete_meal(meal_id: int, db: Session = Depends(deps.get_db)) -> schem
         raise HTTPException(status_code=404, detail="Meal not found")
     deleted_meal = crud.delete_meal(db, meal_id)
     return deleted_meal
-    

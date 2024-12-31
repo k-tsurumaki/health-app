@@ -52,7 +52,7 @@ def get_meals(endpoint, user_id: int, date: str = None, meal_type: str = None):
         return data
     return []
 
-def delete_weight_record(endpoint, record_id: int):
+def delete_record(endpoint, record_id: int):
     url = f"{BASE_URL}{endpoint}{record_id}"
     response = requests.delete(url)
     if 200 <= response.status_code < 300:

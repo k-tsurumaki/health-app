@@ -11,6 +11,9 @@ def custom_date_input(label, key, help):
     )
     return selected_date.strftime("%Y-%m-%d")  # フォーマット済み文字列を返す
 
+def format_page_title(title: str):
+    app_title = "Health App"
+    return f"{app_title} | {title}"
 
 # [cm]を[m]に変換する関
 def cm_to_m(cm: float):
@@ -122,3 +125,24 @@ def calculate_health_indicators(age: int, height: float, weight: float, gender: 
         "Daily Caloric Needs": daily_caloric_needs_value,
     }
     return health_indicators
+
+def show_back_to_dashboard_link():
+    st.page_link(
+        "record/home.py",
+        label="Back to Dashboard",
+        icon=":material/dashboard:",
+    )
+    
+def show_go_to_meal_record_link():
+    st.page_link(
+        "record/meal.py",
+        label="Go to Meal Record",
+        icon=":material/restaurant:",
+    )
+    
+def show_go_to_weight_record_link():
+    st.page_link(
+        "record/weight_record.py",
+        label="Go to Weight Record",
+        icon=":material/fitness_center:",
+    )

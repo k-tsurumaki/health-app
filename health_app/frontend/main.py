@@ -1,4 +1,6 @@
 import streamlit as st
+import time
+from health_app.frontend.components import format_page_title
 
 
 def login():
@@ -10,13 +12,22 @@ def login():
     login_button = st.button("Login")
 
     if login_button:
-        if username == "admin" and password == "admin":
-            st.session_state.current_page = "home"
-            st.session_state.username = username
-            st.rerun()
-        else:
-            st.write("Invalid Username or Password")
-
+        with st.spinner("Logging in..."):
+            success = _authenticate(username, password)
+            if success:
+                st.session_state.current_page = "home"
+                st.session_state.username = username
+                time.sleep(2)
+                st.rerun()
+            else:
+                st.write("Invalid Username or Password")
+            _authenticate(username, password)
+            
+def _authenticate(username, password):
+    if username == "admin" and password == "admin":
+        return True
+    return False
+        
 
 def logout():
     st.session_state.current_page = "main"
@@ -33,14 +44,14 @@ if "username" not in st.session_state:
 
 current_page = st.session_state.current_page
 
-logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
-settings = st.Page("settings.py", title="Settings", icon=":material/settings:")
+logout_page = st.Page(logout, title=format_page_title("Logout"), icon=":material/logout:")
+settings = st.Page("settings.py", title=format_page_title("Settings"), icon=":material/settings:")
 home_page = st.Page(
-    "record/home.py", title="Dashboard", icon=":material/dashboard:", default=(current_page == "home")
+    "record/home.py", title=format_page_title("Dashboard"), icon=":material/dashboard:", default=(current_page == "home")
 )
-record_meal_page = st.Page("record/meal.py", title="Record Meal", icon=":material/restaurant:")
+record_meal_page = st.Page("record/meal.py", title=format_page_title("Record Meal"), icon=":material/restaurant:")
 record_weight_page = st.Page(
-    "record/weight_record.py", title="Record Weight", icon=":material/fitness_center:"
+    "record/weight_record.py", title=format_page_title("Record Weight"), icon=":material/fitness_center:"
 )
 
 accout_pages = [logout_page, settings]
@@ -54,6 +65,6 @@ if st.session_state.current_page == "home":
         {"Account": accout_pages, "Dashboard": home_page, "Record": record_pages}
     )
 else:
-    pg = st.navigation([st.Page(login, title="Login", icon=":material/login:")])
+    pg = st.navigation([st.Page(login, title=format_page_title("Login"), icon=":material/login:")])
 
 pg.run()

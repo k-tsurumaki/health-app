@@ -1,6 +1,6 @@
 import streamlit as st
 from health_app.frontend.app import post_data
-from health_app.frontend.components import custom_date_input
+from health_app.frontend.components import custom_date_input, show_back_to_dashboard_link
 
 if "current_page" not in st.session_state:
     st.session_state.current_page = "weight_record"
@@ -21,4 +21,7 @@ if st.button("Save Record"):
         post_data("/weight_records", data)
         st.session_state.weight_record_updated = True
     else:
-        st.warning("Please enter valid data.")
+        st.error("Please enter valid data.")
+        
+# Dashboardへのリンクを表示
+show_back_to_dashboard_link()

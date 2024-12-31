@@ -1,8 +1,13 @@
-from typing import Optional, Literal
 from datetime import date
 from pydantic import BaseModel
+from enum import Enum
 
-MealType = Literal["breakfast", "lunch", "dinner", "other"]
+# MealType = Literal["breakfast", "lunch", "dinner", "other"]
+class MealType(Enum):
+    BREAKFAST = "breakfast"
+    LUNCH = "lunch"
+    DINNER = "dinner"
+    OTHER = "other"
 
 
 class MealBase(BaseModel):
